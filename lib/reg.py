@@ -194,7 +194,7 @@ class REG:
             return _dict
         def data(src=""):
             if (src == "_LNK_FAV_DIR_"):
-                return ("F:\\Software","F:\\Downloads","C:\Boot\sm_da")
+                return ("F:\\Software","F:\\Downloads","C:\\Boot\\sm_da")
             if (src == "LV"): return {
                 '_SYS_W_DRIVE_': {
                     'column': (
