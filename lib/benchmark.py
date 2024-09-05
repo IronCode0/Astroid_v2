@@ -75,9 +75,9 @@ def bm_reg(src,type='A',interval=1,count=1,result=0):
     return (bm_write/count,bm_read/count) 
 
 def bm_reg_mem_usage(loc,p=0):
-        #dump(REG.main)
-        sum =sys.getsizeof(loc)
-        if p == 1: print(loc.val);
-        for n in loc.children:
-            sum +=bm_reg_mem_usage(loc.children[n])
-        return sum
+    #dump(REG.main)
+    sum =sys.getsizeof(loc)
+    if p == 1: print(loc.val);
+    for n in loc.children:
+        sum +=bm_reg_mem_usage(loc.children[n])
+    return sum
