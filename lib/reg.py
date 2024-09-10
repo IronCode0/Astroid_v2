@@ -3,25 +3,24 @@ class REG:
     def __init__(self):
         self.val = 0
         self.main = self.Node(0)
-    def write(self,addr,type,value):
-        if addr == "":
-            return 0
+    def write(self,addr,value):
+        if addr == "": return 0
         loc = self.main
-        for n in addr.split("\\"):
-            if n not in loc.children:
-                loc.add(n,self.Node())
+        for n in addr.split("/"):
+            if n not in loc.children: loc.add(n,self.Node())
             loc = loc.children[n]
         loc.val = value
     def read(self,addr):
-        if addr == "":
-            return 0
+        if addr == "": return 0
         loc = self.main
-        for n in addr.split("\\"):
-            if n not in loc.children:
-                return 0
+        for n in addr.split("/"):
+            if n not in loc.children: return 0
             loc = loc.children[n]
         return loc.val
-
+    def load_file():
+        pass
+    def save_file():
+        pass
     class Node:
         def __init__(self,value = 0) -> None:
             self.val = value
