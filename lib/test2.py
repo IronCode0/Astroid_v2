@@ -1,36 +1,43 @@
-'''
-import importlib
-import importlib.util
-import debug
-_FS_ = ('_SYS_FOLDER_','_SYS_ROOT_DIR_','_SYS_RECYCLE_','_LNK_FAV_DIR_')
+#import benchmark
+#from test3 import reg
+class Parent:
+    def __init_subclass__(cls, **kwargs):
+        def init_decorator(previous_init):
+            def new_init(self, *args, **kwargs):
+                previous_init(self, *args, **kwargs)
+                if type(self) == cls:
+                    self.__post_init__()
+            return new_init
 
-class _SYS_FOLDER_:
-    def __init__(self): self.value = '_SYS_FOLDER_';
-class _SYS_ROOT_DIR_:
-    def __init__(self): self.value = '_SYS_ROOT_DIR_';
-class _SYS_RECYCLE_:
-    def __init__(self): self.value = '_SYS_RECYCLE_';
+        cls.__init__ = init_decorator(cls.__init__)
 
-'''
+    def __post_init__(self):
+        pass
+class a: _SIGN_HASH = 54886526
+class d: _SIGN_HASH = 44659526
+class reg:
+    def __new__(cls,*args,**kwargs):
+        if args[0]._SIGN_HASH == 44659526: return __class__
+        else: return __class__.f_reg
+    def __init__(): print("reg is __init__")
+    class f_reg:
+        def write(): pass
+    def _func(*args): pass
+    #def write(a,b,c): print('Write function')
+    class write(Parent):
+        def __init__(self,a,b,c):
+            print("write is __init__")
+            self.v=(a,b,c)
+            self.n=1
+        def __post_init__(self):
+            print("_post_",self.v)
+        def __del__(self): print(f'repeat = {self.n}',self.v);
+        def repeat(self,n): self.n = n
+            
 
-import os ,time
-from FShandle import file, FS_Host
-from reg import REG as REG
-f = 'F:\\Folder\\Astroid_v2\\temp\\test_file.docx'
-d = 'F:\\Folder\\Astroid_v2'
-
-db = FS_Host('_SYS_ROOT_DIR_',d)
-file.load_reg(REG)
-db.set_col('FullName', 'NameNoExt', 'ExtOnly', 'EO_format', 'DateModified', 'DM_format', 'ByteSize', 'BS_format')
-db.read()
-db.cout('Group','BS_format','EO_format')
-
-'''
-db = folder(d)
-
-file.load_reg(REG)
-db.set_col('FullName', 'NameNoExt', 'ExtOnly', 'EO_format', 'DateModified', 'DM_format', 'ByteSize', 'BS_format')
-db.read()
-db.print('Group','BS_format','EO_format')
-'''
-
+a=reg(d()).write(4,7,8).repeat(4)
+print('-------------------')
+b=reg(d()).write(4,7,8)
+print('-------------------')
+print(type(a),type(b))
+print("-----------------END-------------------")
