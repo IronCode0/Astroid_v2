@@ -1,5 +1,5 @@
 #from reg import REG as RE
-class REG:
+class reg:
     def __init__(self):
         self.val = 0
         self.main = self.Node(0)
@@ -19,8 +19,13 @@ class REG:
         return loc.val
     def load_file():
         pass
-    def save_file():
-        pass
+    def export_raw(self,addr="/",root=""):
+        if root == "": root =self.main;
+        if addr[0]=='/': addr = addr[1:]
+        text = addr + "=" + str(root.val) + "\n"
+        for c in root.children:
+            text +=__class__.export_raw(self,addr+"/"+c,root.children[c])
+        return text
     class Node:
         def __init__(self,value = 0) -> None:
             self.val = value

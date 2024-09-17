@@ -1,43 +1,54 @@
-#import benchmark
-#from test3 import reg
-class Parent:
-    def __init_subclass__(cls, **kwargs):
-        def init_decorator(previous_init):
-            def new_init(self, *args, **kwargs):
-                previous_init(self, *args, **kwargs)
-                if type(self) == cls:
-                    self.__post_init__()
-            return new_init
+import benchmark
+from reg import reg as rr
 
-        cls.__init__ = init_decorator(cls.__init__)
 
-    def __post_init__(self):
-        pass
-class a: _SIGN_HASH = 54886526
-class d: _SIGN_HASH = 44659526
-class reg:
-    def __new__(cls,*args,**kwargs):
-        if args[0]._SIGN_HASH == 44659526: return __class__
-        else: return __class__.f_reg
-    def __init__(): print("reg is __init__")
-    class f_reg:
-        def write(): pass
-    def _func(*args): pass
-    #def write(a,b,c): print('Write function')
-    class write(Parent):
-        def __init__(self,a,b,c):
-            print("write is __init__")
-            self.v=(a,b,c)
-            self.n=1
-        def __post_init__(self):
-            print("_post_",self.v)
-        def __del__(self): print(f'repeat = {self.n}',self.v);
-        def repeat(self,n): self.n = n
-            
+class a(rr):
+    def export_raw(self,addr="/",root=""):
+        if root == "": root =self.main;
+        if addr[0]=='/': addr = addr[1:]
+        text = addr + "=" + str(root.val) + "\n"
+        for c in root.children:
+            text +=__class__.export_raw(self,addr+"/"+c,root.children[c])
+        return text
 
-a=reg(d()).write(4,7,8).repeat(4)
-print('-------------------')
-b=reg(d()).write(4,7,8)
-print('-------------------')
-print(type(a),type(b))
-print("-----------------END-------------------")
+    def import_raw(): pass
+
+
+k=a()
+#benchmark.reg.write_random(k,10)
+
+k.write("LV/color",7)
+k.write("LV/size/h",400)
+k.write("LV/back",74)
+k.write("RV/back",44)
+k.write("LV/back/egege/gegege",77)
+k.write("TS/back/egege/gegege",74)
+k.write("TS/back/egege",74)
+k.write("LV/for",5)
+k.write("LV/size/w",600)
+k.write("LV/color/force",999)
+
+'''
+=0
+LV=0
+LV/color=7
+LV/color/force=999
+LV/size=0
+LV/size/h=400
+LV/size/w=600
+LV/back=74
+LV/back/egege=0
+LV/back/egege/gegege=77
+LV/for=5
+RV=0
+RV/back=44
+TS=0
+TS/back=0
+TS/back/egege=74
+TS/back/egege/gegege=74
+
+'''
+
+
+#print(k.main.children)
+print(k.export_raw())
