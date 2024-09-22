@@ -193,6 +193,10 @@ class LV:
         self.LV_ysb.grid(row=0,column=1,sticky='ns')
         self.frame.grid_rowconfigure(0, weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
+        self.trigger()
+        # <resume> text.bind('<Alt-KeyPress-a>',lambda event: print(event))
+        # <resume> window.bind('<Motion>',lambda event: pos_var.set(f'x: {event.x} y: {event.y}'))
+
     def add(self,parent = '', index = 'end', values=""):
         if self.LV_ctrl.insert(parent = parent, index=index, values = values):
             self.rlist +=1
@@ -203,6 +207,7 @@ class LV:
             self.LV_ctrl.column(idx, width=debug_list(1,n,20), anchor=debug_list(2,n,'w'),stretch=False)
             self.LV_ctrl.heading(idx, text=debug_list(0,n,n[0]))
             idx +=1
+    def 
     def getid(self): return self.frame;
     def update(self,raw):
         for i in range(len(raw)):

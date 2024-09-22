@@ -26,7 +26,7 @@ def File_viewer_GUI():
     _nav_bar = FileUI.add_frame('_nav_bar'  , UI.FrameX('nav bar').pack(padx=5, pady=5, fill='x'))
     _file_ex = FileUI.add_frame('file' , UI.FrameX('ListView').pack(padx=5, pady=0, fill='both', expand=True))
     #_sb_bar  = FileUI.add_frame('sb'   , UI.FrameX('Status_bar').pack(padx=5, pady=0, fill='x'))
-    
+    # <resume> _file_ex.frames[_nav_bar].LV.trigger()
     FileUI.window.after_idle(FV_refresh,FileUI)
     FileUI.window.geometry()
     FileUI.show()
