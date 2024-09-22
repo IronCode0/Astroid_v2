@@ -8,7 +8,7 @@ import time
 import os
 import debug
 from FShandle import FS_Host
-from reg import REG
+from reg import reg as REG
 
 reg_LV = REG.load.data('LV')
 
