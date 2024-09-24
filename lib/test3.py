@@ -1,98 +1,34 @@
-class reg:
-    def __init__(self): self.val = 0; self.main = self.Node(0);
-    def write(self,addr,value):
-        if addr == "": return 0
-        loc = self.main
-        for n in addr.split("/"):
-            if n not in loc.children: loc.add(n,self.Node())
-            loc = loc.children[n]
-        loc.val = value
-    def read(self,addr):
-        if addr == "": return 0
-        loc = self.main
-        for n in addr.split("/"):
-            if n not in loc.children: return 0
-            loc = loc.children[n]
-        return loc.val
-    def set_raw(self,raw,root=None):
-        if not root: root = self.main;
-        p=0
-        l= len(raw)
-        brc = 0
-        while p < l:
-            if raw[p] == "<":
-                brc +=1
-                s1=p
-                while not raw[s1] == "=": s1 +=1
-                key = raw[p+1:s1]
-                s2 = s1
-                while s2 < l:
-                    s2 +=1
-                    if raw[s2] == "<": break #new
-                    if raw[s2] == ">": break;
-                val = raw[s1+1:s2]
-                #print(key,val)
-                root.children[key] = self.Node(val)
-                #print( root.children[key])
-                if raw[s2] == "<": 
-                    end = 0
-                    t=l-1
-                    while end != brc:
-                        if raw[t] == ">": end +=1;
-                    p = self.set_raw(raw[s2:end],root.children[key]);
-            p += 1
-            if raw[p] == ">": brc-= 1;
-            if brc == 0: break;
-        return p
-    def get_raw(self):
-        text= __class__._rec_phrase(self.main)
-        return text
-    def _rec_phrase(addr):
-        #print(addr.children)
-        text = ""
-        if not addr.children: return text
-        for e in addr.children:
-            print(e)
-            child = addr.children[e]
-            text +="<"+ e + "=" + str(child.val) + __class__._rec_phrase(child) + ">"
-        return text
-    class Node:
-        def __init__(self,value = 0) -> None: self.val = value; self.children = {};
-        def add(self,param,child): self.children[param] = child; return child
-        def get(self,param): return self.children[param]
-'''
+import FShandle
+from reg import reg
+import datalib
 
+reg_LV=reg.load.data('LV')
+FShandle._SYS_FOLDER_(fileinfo=FShandle._SYS_FILE_CTRL_)
 
-t = reg()
-util.write_random(t)
-import time
-time_start = time.perf_counter()
-s=t.size()
-time_end = time.perf_counter()
-print(f'calc size in {time_end} for {t} bytes using one line')
-time_start = time.perf_counter()
-s=t.size2()
-time_end = time.perf_counter()
-print(f'calc size in {time_end} for {t} bytes using multiple line')
+FS=FShandle.FS_Host(
+    FShandle._SYS_FILE_CTRL_(),
+    FShandle._SYS_FOLDER_(fileinfo=FShandle._SYS_FILE_CTRL_),
+    FShandle._SYS_ROOT_DIR_(),
+    FShandle._LNK_FAV_DIR_(),
+    FShandle._SYS_RECYCLE_(),
+    FShandle._SYS_W_DRIVE_(),  )
 
-t.write("LV/color",7)
-t.write("LV/size/h",400)
-t.write("LV/back",74)
-t.write("RV/back",44)
-t.write("LV/back/egege/gegege",77)
-t.write("TS/back/egege/gegege",74)
-t.write("TS/back/egege",74)
-t.write("LV/for",5)
-t.write("LV/size/w",600)
-t.write("LV/color/force",999)
+ds=datalib.arrayset()
 
-print(t.read("LV/size/h"))
-print(t.save_file())
-'''
-
-
-
-#raw="<LV=0<color=7<force=999>><size=0<h=400><w=600>><back=74<egege=0<gegege=77>>><for=5>><RV=0<back=44>><TS=0<back=0<egege=74<gegege=74>>>>"
-
-
+print('kk',FS.m_obj['_SYS_FOLDER_'].fileinfo)
+maxloop=0
+while True and maxloop<50:
+    maxloop+=1
+    target=input()
+    if target.upper()=='EXIT': break
+    mname=FS.set(target)
+    #_FS.set(mname)
+    col_read = reg_LV[FS.target.__class__.__name__]['column_read']
+    col_cout = reg_LV[FS.target.__class__.__name__]['column_cout']
+    col_name = tuple(k[0] for k in col_cout)
+    FS.set_col(*col_read)
+    FS.read()
+    #print(FS.target.data)
+    ds.update(FS.cout(*col_name)).padded().show()
+        
 

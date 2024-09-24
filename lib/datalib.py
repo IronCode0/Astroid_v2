@@ -1,9 +1,12 @@
 
 class arrayset:
-    def __init__(self,n,dim=1):
-        self.n = n;  
+    def __init__(self,n=[],dim=1):
+        self.n = [list(map(int, i)) for i in n];  
         self.dim=dim   
         self.cur=0 
+    def update(self,n): 
+        self.n=[list(map(str, i)) for i in n]
+        return self
     def comb(a,b):
         r=[]
         for i in a: r.extend([(i,j) for j in b])
@@ -20,6 +23,7 @@ class arrayset:
         for i in range(r):
             for j in range(cc): text[i][j]+=" "*(cw[j]-len(text[i][j]))
         self.n = text
+        return self;
     def reshape(self,*dim):
         if (len(dim) == 1 and self.dim ==1 ): return self;
         __class__.flatten(self)
@@ -50,6 +54,7 @@ class arrayset:
         r=self.n
         print('','-'*sum([3*len(r[0])+1,*[len(c) for c in r[0]]]))
         for i in r: print("",*[j for j in i],"",sep=" | ",end="\n "+'-'*sum([3*len(r[0])+1,*[len(c) for c in i]])+"\n" )
+        return self
     def __add__(self,other): return self.n+other.n
     def __call__(self, *args, **kwds): __class__.show(self)
     def __repr__(self):
@@ -57,10 +62,3 @@ class arrayset:
         for i in self.n: t+= ' '.join(k for k in i) + "\n"
         return t;
 
-t=[["hello","ff","pbhop","k"],
-   ["qwe","fdg","vdve"],
-   ["as","q","loiuyt"]]
-
-k=numset(t)
-k.padded()
-k.raw()

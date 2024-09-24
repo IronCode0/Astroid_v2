@@ -36,6 +36,7 @@ class reg:
         def get(self,param):
             return self.children[param]
     @staticmethod
+    
     class load:
         def FileType(src=""):
             _dict = {
@@ -197,21 +198,39 @@ class reg:
             }
             return _dict
         def data(src=""):
-            if (src == "_LNK_FAV_DIR_"):
-                return ("F:\\Software","F:\\Downloads","C:\\Boot\\sm_da")
-            if (src == "LV"): return {
-                '_SYS_W_DRIVE_': {
-                    'column': (
-                        ('Caption',100),
-                        ('DriveType',100),
-                        ('DT_format',100),
-                        ('FileSystem',100),
-                        ('FreeSpace',100),
-                        ('FS_format',100),
-                        ('Size', 100),
-                        ('Size_format',100),
-                        ('VolumeName',100)
-                    )
-                }
-                }
+            global reg_LV
+            if (src == "_LNK_FAV_DIR_"):return ("F:\\Software","F:\\Downloads","C:\\Boot\\sm_da")
+            if (src == "LV"): return reg_LV
 
+reg_LV={
+    '_SYS_W_DRIVE_': {
+        'column_read': (
+            'Caption'  ,'DriveType','DT_format'  ,'FileSystem','FreeSpace',
+            'FS_format','Size'     ,'Size_format','VolumeName'
+        ),
+        'column_cout': (
+            ('Caption',100),
+            ('DT_format',100),
+            ('FileSystem',100),
+            ('FS_format',100),
+            ('Size', 100),
+            ('Size_format',100),
+            ('VolumeName',100)
+        )
+    },
+    '_SYS_FOLDER_': {
+        'column_read': (
+            'FullName'    ,'NameNoExt','ExtOnly'    ,'EO_format','FileAttribute',
+            'DateModified','DM_format','DateCreated','DC_format','DateAccessed' ,
+            'DA_format'   , 'ByteSize','BS_format'    
+        ),
+        'column_cout': (
+            ('NameNoExt',100),
+            ('EO_format',100),
+            ('DM_format',100),
+            ('DC_format',100),
+            ('DA_format',100),
+            ('BS_format',100)
+        )
+    }
+    }

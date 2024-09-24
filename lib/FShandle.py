@@ -2,31 +2,59 @@ import os, time, debug
 import importlib
 import importlib.util
 
+module_list=[
+    '_SYS_FILE_CTRL_',   #:_SYS_FILE_CTRL_,
+    '_SYS_FOLDER_'   ,   #:_SYS_FOLDER_   ,
+    '_SYS_ROOT_DIR_' ,   #:_SYS_ROOT_DIR_ ,
+    '_LNK_FAV_DIR_'  ,   #:_LNK_FAV_DIR_  ,
+    '_SYS_RECYCLE_'  ,   #:_SYS_RECYCLE_  ,
+    '_SYS_W_DRIVE_'      #:_SYS_W_DRIVE_
+    ]
 
 
 class FS_Host:
-    def __init__(self,module=False,*args):
-        self._module = False
-        self._mlist={}
-        if module: self.set(module,*args)
+    def __init__(self,*objects):
+        self.target = False
+        self.m_obj={}
+        for k in objects: self.add(k)
     def __getattr__(self, name: str):
-        if hasattr(self._module, name): return getattr(self._module, name) 
+        if hasattr(self.target, name): return getattr(self.target, name) 
         else: return debug.cout('Attribute does not exit')
-    def set(self,module,*args):
-        if module in self._mlist: self._module = self._mlist[module]
+    def __repr__(self) -> str:
+        return str(f"{self.target}\nName={self.target.__class__.__name__}")
+    def add(self,module):
+        if (type(module)==tuple): debug.cout("Feature not available")
+            #if temp_module is not None: self.m_obj[module_str] = self.target = temp_module()
+            #elif importlib.util.find_spec(module_str):
+            #    self._mlist[module_str] = self._module = importlib.import_module(module_str)(*args)
+            #else: print('error 0x400878: module does not found')
+        if (type(module.__class__) !=type): return self;
+        self.m_obj[module.__class__.__name__]=module
+        return self
+    def set(self,target):
+        flag=False
+        if target in self.m_obj:
+            flag=True
+            self.target=self.m_obj[target]
         else:
-            temp_module = globals().get(module)
-            if temp_module is not None: self._mlist[module] = self._module = temp_module()
-            elif importlib.util.find_spec(module): self._mlist[module] = self._module = importlib.import_module(module)(*args)
-            else: print('error 0x400878: module does not found')
+            for m in self.m_obj:
+                if not callable(self.m_obj[m].check_support): continue;
+                if self.m_obj[m].check_support(target):
+                    self.target=self.m_obj[m]
+                    flag=True
+                    break
+        if flag and hasattr(self.target,'_update'): self.target._update(target)
+        return self
     def select(self,idx):
         (t_module,args)=self._module._select(idx)
-        if not self._module.__class__.__name__ == t_module:
-            self.set(t_module)
-            print(77)
+        if not self._module.__class__.__name__ == t_module: self.set(t_module)
         for key in args:
             if hasattr(self._module, key): getattr(self._module, key)(args[key])
-    
+    def cout(self,*Args):
+        if not hasattr(self.target,'data'): return None
+        r=[]
+        for n in self.target.data: r.append([n[self.target._cols[a]] for a in Args]);
+        return r
 class _SYS_FILE_CTRL_:
     '''
     getinfo Args:
@@ -41,7 +69,7 @@ class _SYS_FILE_CTRL_:
         }
     _default_col = tuple((True,*(False for n in range(len(_cols)-1))))
     @staticmethod
-    def load_reg(REG): _SYS_FILE_CTRL_._Type = REG.load.FileType();
+    def load_reg(REG): __class__._Type = REG.load.FileType();
     def splitpath(_file=""):
         if (not _file): return 0;
         (_path,_name) = os.path.split(_file)
@@ -50,7 +78,7 @@ class _SYS_FILE_CTRL_:
     def getinfo(_file="",args=_default_col):
         if (not _file): return 0;
         temp=[*args]
-        (_drive,_path,_name,_ext) = _SYS_FILE_CTRL_.splitpath(_file)
+        (_drive,_path,_name,_ext) = __class__.splitpath(_file)
         if os.path.isdir(_file):
             if args[0] : temp[0]  = str(_name + ("." + _ext if _ext else ""));   # FullName
             if args[1] : temp[1]  = temp[0];                                # NameNoExt
@@ -66,7 +94,7 @@ class _SYS_FILE_CTRL_:
             if args[5]: temp[5]  = _drive;   # FileDrive
             temp[6]  = False;   # FileAttribute
             temp[13] = int(0);   # ByteSize
-            temp[14] = int(0);   # BS_format
+            temp[14] = "";   # BS_format
             temp[15] = int(0);   # DiskSize
             temp[16] = '_FOLDER'
             return temp
@@ -75,7 +103,7 @@ class _SYS_FILE_CTRL_:
         if args[0] : temp[0]  = str(_name + ("." + _ext if _ext else ""));   # FullName
         if args[1] : temp[1]  = _name;                                  # NameNoExt
         if args[2] : temp[2]  = str(_ext if _ext else 'File');          # ExtOnly
-        if args[3] : temp[3]  = _SYS_FILE_CTRL_._Type[_ext.lower()] if _ext.lower() in _SYS_FILE_CTRL_._Type else (_ext.upper() + " File");    #EO_format
+        if args[3] : temp[3]  = __class__.EO_format(_ext)               #EO_format
         if args[4] : temp[4]  = False;                                  # FileDir
         if args[5] : temp[5]  = False;                                  # FileDrive
         if args[6] : temp[6]  = False;                                  # FileAttribute
@@ -90,22 +118,41 @@ class _SYS_FILE_CTRL_:
         if args[15]: temp[15] = ts;                        # DiskSize
         temp[16] = '_FILE'
         return temp
+    @staticmethod
+    def check_support(text): return False
+    def EO_format(ext=""):
+        if not ext: return 'File'
+        if ext.lower() in __class__._Type: return __class__._Type[ext.lower()]
+        else: return (ext.upper() + " File"); 
+
 class _SYS_FOLDER_:
-    def __init__(self,path=""):
+    _cols = {
+        'FullName'      :  0, 'NameNoExt'    :  1, 'ExtOnly'    :  2, 'EO_format'   :  3, 'FileDir'   : 4, 'FileDrive'    : 5,
+        'FileAttribute' :  6, 'DateModified' :  7, 'DM_format'  :  8, 'DateCreated' :  9, 'DC_format' : 10,'DateAccessed' : 11,
+        'DA_format'     : 12, 'ByteSize'     : 13, 'BS_format'  : 14, 'DiskSize'    : 15, 'Group'     : 16
+        }
+    def __new__(cls, *args, **kwargs) -> bool:
+        if ('fileinfo' in kwargs) and (type(kwargs['fileinfo'].__class__) ==type): return super().__new__(cls)
+        return None;
+    def __init__(self,fileinfo=None,path=""):
         self.column = ()
-        self.reset_col()
-        self.set_col('FullName')
+        self.fileinfo=fileinfo
+        self.path=path
         self.data=[]
         self.group='DEFAULT'
+        self.reset_col()
+        self.set_col('FullName')
         self.grp_lst = ()
+        
         if path: self.set_path(path)
+    def _update(self,path): self.set_path(path)
     def set_path(self,path):
         temp=path if not path[-1:] == "\\" else path[0:-1]
         if os.path.isdir(temp): self.path=temp
         return
     def set_col(self,*Args):
         temp=list(self.column)
-        _col = _SYS_FILE_CTRL_._cols
+        _col = self.fileinfo._cols
         for i in Args:
             temp[_col[i]] = True
         self.column = tuple(temp)
@@ -133,24 +180,29 @@ class _SYS_FOLDER_:
     def reset_col(self):
         self.column=tuple((False for n in range(len(_SYS_FILE_CTRL_._cols))))
     def read(self):
-        f_list = os.listdir(self.path)
+        f_list = os.listdir(self.path + "\\")
         idx_dir = 0
+        self.data=[]
         for i in f_list:
             filename = self.path + "\\" + i
-            if   (os.path.isdir(filename) ): self.data.append(_SYS_FILE_CTRL_.getinfo(filename,self.column)); idx_dir +=1;
-            elif (os.path.isfile(filename)): self.data.insert(idx_dir,_SYS_FILE_CTRL_.getinfo(filename,self.column));
+            if   (os.path.isdir(filename) ): self.data.append(self.fileinfo.getinfo(filename,self.column)); idx_dir +=1;
+            elif (os.path.isfile(filename)): self.data.insert(idx_dir,self.fileinfo.getinfo(filename,self.column));
             else: print(f"can't add item='{filename}' in List")
         return len(self.data)
     def cout(self,*Args):
-        for n in self.data: print(*(n[_SYS_FILE_CTRL_._cols[a]] for a in Args),sep="\t");
+        for n in self.data: print(*(n[self.fileinfo._cols[a]] for a in Args),sep="\t");
     def sort(self,col):
         self.data = sorted(self.data, key=lambda x: x[col])
+    @staticmethod
+    def check_support(text): return True if os.path.isdir(text) else False
 class _SYS_ROOT_DIR_:
     def __init___(self,*args):
         self._FS = []
         for cls in args: self._FS.append(cls());
     def read(self):
         pass
+    @staticmethod
+    def check_support(text): return False
 class _LNK_FAV_DIR_:
     _tag=[]
     def __init__(self):
@@ -182,8 +234,11 @@ class _LNK_FAV_DIR_:
         return (t_module,args)
     def cout(self,*Args):
         for n in self.data: print(*(n[_SYS_FILE_CTRL_._cols[a]] for a in Args),sep="\t");
+    @staticmethod
+    def check_support(text): return False
 class _SYS_RECYCLE_:
-    pass
+    @staticmethod
+    def check_support(text): return False
 class _SYS_W_DRIVE_:
     _cols = {
         'Access'     : 0,'Caption'   : 1,'Compressed' : 2,'Description' : 3,'DeviceID' : 4,'DriveType' : 5,
@@ -205,13 +260,12 @@ class _SYS_W_DRIVE_:
         self.wmi_data = self._wmi.WMI().Win32_LogicalDisk();
     def set_col(self,*Args):
         temp=list(self.column)
-        _col = self.__class__._cols
+        _col = __class__._cols
         for i in Args: temp[_col[i]] = True
         self.column = tuple(temp)
         return self.column
     def set_group(self,mode='DEFAULT'): pass;
-    def reset_col(self): self.column=tuple((False for n in range(len(self.__class__._cols))))
-    
+    def reset_col(self): self.column=tuple((False for n in range(len(__class__._cols))))
     def read(self):
         #self.wmi_data = self._wmi.WMI().Win32_LogicalDisk();
         self.data = []
@@ -221,18 +275,18 @@ class _SYS_W_DRIVE_:
     def cout(self,*Args): print(*(n for n in self.data) ,sep="\t");
     def sort(self,col): pass;
     def getraw(self,*col):
-        print(self.data)
         t_cidx = __class__._cols
         raw=[]
         for r in self.data:
             temp = []
             for c in col:
-                print(c,t_cidx[c],end="\t")
+                print(c,r[t_cidx[c]],end="\t")
                 temp.append(r[t_cidx[c]])
             print(" ")
             raw.append(tuple(temp))
-        return raw;
+        #return raw;
     @staticmethod
+    def check_support(text): return True if text=="This PC" else False
     def convert_wmi(input,_col):
         temp = list(_col)
         if _col[0]:  temp[0]  = input.Access
