@@ -1,3 +1,64 @@
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
+from time import sleep
+import os, debug, sys
+from exec import pseudo_class
+
+from PyQt5.QtWidgets import (
+    QApplication,
+    QLabel,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
+
+w=Qt
+clicksLabel = QLabel("Counting: 0 clicks", w)
+clicksLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+stepLabel = QLabel("Long-Running Step: 0")
+stepLabel.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+countBtn = QPushButton("Click me!", w)
+longRunningBtn = QPushButton("Long-Running Task!", w)
+
+def layout(phrase):
+    if type(phrase) == dict:
+        if phrase['type']=='frame':
+            layout(phrase['text'])
+        elif phrase['type']=='Label':
+            pass
+    elif type(phrase) == list:
+        for e in phrase:
+            layout(e)
+
+
+
+p={'type':'frame','Align':"V","text":[
+    {'type':'frame','Align':"H","text":[
+        {'type':'Label','id':"0x001",'text': "Counting","size":(50,20)},
+        {'type':'Label','id':"0x002",'text': "Counting","size":(50,20)}
+        ]
+    },{'type':'frame','Align':"H","text":[
+        {'type':'Label','id':"0x003",'text': "Counting","size":(50,20)},
+        {'type':'Label','id':"0x004",'text': "Counting","size":(50,20)}
+        ]
+    },{'type':'frame','Align':"H","text":[
+        {'type':'Label','id':"0x005",'text': "Counting","size":(50,20)},
+        {'type':'Label','id':"0x006",'text': "Counting","size":(50,20)}
+        ]
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+'''
 import benchmark
 from reg import reg as rr
 
@@ -29,6 +90,8 @@ k.write("LV/size/w",600)
 k.write("LV/color/force",999)
 
 '''
+
+'''
 =0
 LV=0
 LV/color=7
@@ -51,4 +114,4 @@ TS/back/egege/gegege=74
 
 
 #print(k.main.children)
-print(k.export_raw())
+#print(k.export_raw())

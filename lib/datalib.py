@@ -1,4 +1,4 @@
-
+#incl
 class arrayset:
     def __init__(self,n=[],dim=1):
         self.n = [list(map(int, i)) for i in n];  
