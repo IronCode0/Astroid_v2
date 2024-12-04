@@ -61,4 +61,27 @@ class arrayset:
         t=""
         for i in self.n: t+= ' '.join(k for k in i) + "\n"
         return t;
-
+class quick:
+    def balance_2d(data,r,c):
+        for i in range(r):
+            if len(data[i]) == c: continue
+            if type(data[i]) == tuple: data[i]=list(data[i])
+            while len(data[i]) < c: data[i].append("")
+    def pad2d(data,align=None):
+        col_mlen=[len(i) for i in data]
+        if sum(col_mlen)/len(col_mlen) != len(data[0]): __class__.balance_2d(data,len(data),max(col_mlen))
+        col_w=[max([len(str(r[c])) for r in data]) for c in range(max(col_mlen))]
+        r=len(data)
+        c=len(col_w)
+        if not align: align='L'*c
+        toadd=''
+        for i in range(r):
+            if type(data[i]) == tuple: data[i]=list(data[i])
+            for j in range(c):
+                data[i][j] = str(data[i][j])
+                if len(data[i][j]) == col_w[j]: continue
+                toadd=" "*(col_w[j]-len(data[i][j]))
+                if len(toadd) <1: continue
+                if align[j]=='L': data[i][j]+=toadd
+                if align[j]=='R': data[i][j]=toadd+data[i][j]
+        return data

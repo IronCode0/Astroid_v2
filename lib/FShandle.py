@@ -1,4 +1,5 @@
-import os, time, debug
+import os, time
+from . import debug
 import importlib
 import importlib.util
 
@@ -189,6 +190,8 @@ class _SYS_FOLDER_:
             elif (os.path.isfile(filename)): self.data.insert(idx_dir,self.fileinfo.getinfo(filename,self.column));
             else: print(f"can't add item='{filename}' in List")
         return len(self.data)
+    def get_data(self,*Args):
+        return [[n[self.fileinfo._cols[a]] for a in Args] for n in self.data]
     def cout(self,*Args):
         for n in self.data: print(*(n[self.fileinfo._cols[a]] for a in Args),sep="\t");
     def sort(self,col):

@@ -40,7 +40,16 @@ class pseudo_class:
         for key in args:
             if hasattr(self._module, key): getattr(self._module, key)(args[key])
     def cout(self,*Args):
-        if not hasattr(self.target,'data'): return None
+        # v2
+        if hasattr(self.target,'cout'): return self.target.cout(*Args)
+        elif not hasattr(self.target,'data'): return None
         r=[]
-        for n in self.target.data: r.append([n[self.target._cols[a]] for a in Args]);
+        if (len(Args) > 0):
+            for n in self.target.data: r.append([n[self.target._cols[a]] for a in Args]);
+        else: return self.target.data
+
+        # v1
+        #if not hasattr(self.target,'data'): return None
+        #r=[]
+        #for n in self.target.data: r.append([n[self.target._cols[a]] for a in Args]);
         return r 

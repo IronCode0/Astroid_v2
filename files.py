@@ -1,38 +1,19 @@
-import sys
-import tkinter as tk
-from tkinter import ttk
-from random import choice
-from lib import FShandle,debug
 
-try:
-    cmd_args =FShandle.Arg_Pharse(sys.argv)
-except:
-  debug.print("No Arguments")
+from lib import debug as dg
 
 
-def dataset():
-    gdb = {
-        'GUI':{
-            'width':600,
-            'height':400
-        },
-        'List':{
-            'col':['Name','Date modified','Type','size']
-        }
-    }
-    return gdb
-gdb=dataset()
-class fileGUI:
-    def __init__(self,size=[gdb['GUI']['width'],gdb['GUI']['height']]):
-        self.window=tk.Tk()
-        self.window.geometry(size[0]+'x'+size[1])
-        self.window.title("Files")
-        # Nav bar
-        # Tree
-        # List
-        self.window = ttk.Treeview(self.window,columns=gdb['List']['col'])
-        # Status
+global dc
+def c():
+    dg.cout("hello")
+    dg.cout("hello",7858)
+    dg.cout("hello",trace=True)
+    dg.cout([7,"fefe"])
+    dg.cout(["hello","fefe"],7858)
+    dg.cout(["hello","fefe"],trace=True)
+    dg.cout({1:"hello","ll":"jviueiue"})
+    dg.cout({1:"hello","ll":"jviueiue"},7858)
+    dg.cout({1:"hello","ll":"jviueiue"},trace=True)
 
-      
-
-
+def d(): c()
+def e(): d()
+e()
