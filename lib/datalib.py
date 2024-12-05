@@ -86,17 +86,36 @@ class quick:
                 if align[j]=='R': data[i][j]=toadd+data[i][j]
         return data
 
+
 class datanest:
     def __init__(self,value=None) -> None: self.value=value
     def __setattr__(self, name: str, value) -> None: super().__setattr__(name,value if name=='value' else __class__(value))
-    def __repr__(self) -> str: return str(super().__getattribute__('value'))
-
+    def __repr__(self) -> str: return str(self.value)
+    def __getitem__(self,item): return list(self.__dict__.keys())
+    def phrase(self,loc='',value=None):
+        if len(loc)==0:
+            super().__setattr__('value' ,value)
+            return
+        t=self
+        i=loc.find('.')
+        if i == -1:
+            super().__setattr__(loc,__class__(value))
+            return
+        w=loc[:1]
+        if hasattr(self,w):
+            t= super().__getattribute__(w)
+        else:
+            t=__class__(value)
+            super().__setattr__(w,t)
+        t.phrase(loc[1+1:],value)
+        return self
 if __name__=="__main__":
     a=datanest()
-
     a.b=8
     a.b.c=10
     a.b.c.d=8
     a.b.d=12
-    print(a, a.b, a.b.c)
-    print(a.b[0], a.b.c[0])
+    a.phrase('b.e',100)
+    a.phrase('',9)
+    print(a,a.b,a.b.e)
+    print(a.b[0],a.b.c[0])
