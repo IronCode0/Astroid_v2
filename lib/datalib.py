@@ -85,3 +85,18 @@ class quick:
                 if align[j]=='L': data[i][j]+=toadd
                 if align[j]=='R': data[i][j]=toadd+data[i][j]
         return data
+
+class datanest:
+    def __init__(self,value=None) -> None: self.value=value
+    def __setattr__(self, name: str, value) -> None: super().__setattr__(name,value if name=='value' else __class__(value))
+    def __repr__(self) -> str: return str(super().__getattribute__('value'))
+
+if __name__=="__main__":
+    a=datanest()
+
+    a.b=8
+    a.b.c=10
+    a.b.c.d=8
+    a.b.d=12
+    print(a, a.b, a.b.c)
+    print(a.b[0], a.b.c[0])
